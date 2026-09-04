@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2019 - 2023 UnionTech Software Technology Co., Ltd.
+// SPDX-FileCopyrightText: 2019 - 2026 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: LGPL-3.0-or-later
 
@@ -28,6 +28,7 @@ SignalQuickPanel::~SignalQuickPanel()
 void SignalQuickPanel::initUI()
 {
     m_icon->setFixedSize(QSize(24, 24));
+    m_icon->setObjectName("ClipboardQuickPanelIcon");
 
     m_description->setElideMode(Qt::ElideRight);
     DToolTip::setToolTipShowMode(m_description, DToolTip::ShowWhenElided);

@@ -252,6 +252,7 @@ void ItemWidget::initUI()
     m_closeButton->setFixedSize(QSize(ItemTitleHeight, ItemTitleHeight) * 2 / 3);
     m_closeButton->setRadius(ItemTitleHeight);
     m_closeButton->setVisible(false);
+    m_closeButton->setObjectName("ItemCloseButton");
 
     m_refreshTimer->setInterval(60 * 1000);
 
@@ -276,6 +277,8 @@ void ItemWidget::initUI()
     setRadius(8);
 
     setFocusPolicy(Qt::StrongFocus);
+    static int s_itemWidgetIndex = 0;
+    setObjectName(QString("ItemWidget_%1").arg(s_itemWidgetIndex++));
 
     setMouseTracking(true);
     m_contentLabel->setMouseTracking(true);

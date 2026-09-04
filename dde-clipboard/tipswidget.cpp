@@ -35,6 +35,7 @@ void TipsWidget::initUI()
     tipsLabel->setPalette(palette);
 
     m_tipsCloseButton = new DIconButton(this);
+    m_tipsCloseButton->setObjectName("TipsCloseButton");
     m_tipsCloseButton->setIcon(QIcon::fromTheme("window-close"));
     m_tipsCloseButton->setFlat(true);
     m_tipsCloseButton->setFocusPolicy(Qt::NoFocus);

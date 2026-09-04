@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2020 - 2022 UnionTech Software Technology Co., Ltd.
+// SPDX-FileCopyrightText: 2020 - 2026 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: LGPL-3.0-or-later
 
@@ -35,6 +35,7 @@ void ClipboardItem::init()
     m_icon->setFixedSize(Dock::DOCK_PLUGIN_ITEM_FIXED_SIZE);
     m_icon->setIcon(QIcon::fromTheme("clipboard"));
     m_icon->setClickable(true);
+    m_icon->setObjectName("ClipboardDockIcon");
 
     auto vLayout = new QVBoxLayout(this);
     vLayout->setSpacing(0);

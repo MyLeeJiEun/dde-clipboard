@@ -1,0 +1,88 @@
+version: '1.0'
+# DDE-198 AT-SPI 锚点规则：
+#   - 测试定位锚点为 setObjectName()（C++），对应 AT-SPI AccessibleId。
+#   - accessible_id 字段取 setObjectName() 的值；setAccessibleName() 仅保留
+#     屏幕阅读器语义，不再作为覆盖率门禁。
+#   - 覆盖率口径：交互控件有 setObjectName() 即 ok。
+#   - object_name 与 accessible_id 取值相同（锚点已迁至 setObjectName），
+#     保留 object_name 以记录原始 setObjectName() 调用值。
+widgets:
+- variable: m_listview
+  type: ListView *
+  object_name: Listview
+  accessible_id: Listview
+  source_file: dde-clipboard/mainwindow.cpp
+  class_name: MainWindow
+  line: 380
+  note: >-
+    与 ClipboardModel::m_list 为同一对象（全仓库仅 new 一次 ListView）。
+    命名在 MainWindow::initUI 生效；clipboardmodel.cpp 中冗余的 "List" 已删除（去重）。
+- variable: m_clearButton
+  type: IconButton *
+  object_name: ClearButton
+  accessible_id: ClearButton
+  source_file: dde-clipboard/mainwindow.cpp
+  class_name: MainWindow
+  line: 344
+- variable: m_placeholderIcon
+  type: DIconButton *
+  object_name: PlaceholderIcon
+  accessible_id: PlaceholderIcon
+  source_file: dde-clipboard/mainwindow.cpp
+  class_name: MainWindow
+  line: 390
+- variable: m_tipsCloseButton
+  type: DIconButton *
+  object_name: TipsCloseButton
+  accessible_id: TipsCloseButton
+  source_file: dde-clipboard/tipswidget.cpp
+  class_name: TipsWidget
+  line: 38
+- variable: m_closeButton
+  type: IconButton *
+  object_name: ItemCloseButton
+  accessible_id: ItemCloseButton
+  source_file: dde-clipboard/itemwidget.cpp
+  class_name: ItemWidget
+  line: 255
+- variable: m_icon
+  type: CommonIconButton *
+  object_name: ClipboardDockIcon
+  accessible_id: ClipboardDockIcon
+  source_file: dock-clipboard-plugin/clipboarditem.cpp
+  class_name: ClipboardItem
+  line: 38
+- variable: m_icon
+  type: CommonIconButton *
+  object_name: ClipboardQuickPanelIcon
+  accessible_id: ClipboardQuickPanelIcon
+  source_file: dock-clipboard-plugin/widget/singlequickpanel.cpp
+  class_name: SignalQuickPanel
+  line: 31
+qml_elements: []
+transient_elements:
+- variable: m_closeButton
+  type: IconButton *
+  object_name: ItemCloseButton
+  accessible_id: ItemCloseButton
+  source_file: dde-clipboard/itemwidget.cpp
+  class_name: ItemWidget
+  line: 255
+  note: >-
+    逐项关闭按钮，仅在 hover/focus 时 show()，初始 setVisible(false)，瞬态显现。
+- variable: m_icon
+  type: CommonIconButton *
+  object_name: ClipboardDockIcon
+  accessible_id: ClipboardDockIcon
+  source_file: dock-clipboard-plugin/clipboarditem.cpp
+  class_name: ClipboardItem
+  line: 38
+  note: Dock tray icon, visible when clipboard plugin is loaded on Dock
+- variable: m_icon
+  type: CommonIconButton *
+  object_name: ClipboardQuickPanelIcon
+  accessible_id: ClipboardQuickPanelIcon
+  source_file: dock-clipboard-plugin/widget/singlequickpanel.cpp
+  class_name: SignalQuickPanel
+  line: 31
+  note: Dock quick panel icon, transient popup when clicking Dock clipboard icon

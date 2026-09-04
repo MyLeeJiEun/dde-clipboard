@@ -30,6 +30,7 @@ void MessageManager::sendMessage(QWidget *par)
     }
 
     Dtk::Widget::DFloatingMessage *floMsg = new Dtk::Widget::DFloatingMessage(Dtk::Widget::DFloatingMessage::TransientType, par);
+    floMsg->setObjectName("CopiedMessage");
     floMsg->setAttribute(Qt::WA_DeleteOnClose);
     floMsg->setAttribute(Qt::WA_AlwaysStackOnTop);
     // 固定使用当前图标，不跟随系统图标变化
