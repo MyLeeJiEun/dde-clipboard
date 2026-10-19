@@ -1,0 +1,50 @@
+# dde-clipboard 的 DBus 接口测试(process 形态)。
+# 被测物是 GUI 程序(DApplication + MainWindow),接口面很小:
+# org.deepin.dde.Clipboard1 @ /org/deepin/dde/Clipboard1
+#   Toggle/Show/Hide + clipboardVisible 属性 + clipboardVisibleChanged 信号。
+#
+# 离屏要点:程序启动即建 MainWindow 并注册服务,窗口本身不需要真实屏幕;
+# 但 DTK 会读主题/图标,且 DApplication 需要平台插件 —— 用 offscreen。
+# ClipboardLoader1 只是主动去连的远端服务(未注册时 QDBusInterface 惰性失败),
+# 不影响本进程注册 Clipboard1。
+apiVersion: v1
+process: dde-clipboard
+mode: isolate
+kind: process
+tier: T3
+
+services:
+  - org.deepin.dde.Clipboard1
+
+binary:
+  search:
+    - ${BUILD_DIR}/dde-clipboard
+    - ${BUILD_DIR}/bin/dde-clipboard
+    - /usr/bin/dde-clipboard
+
+args: []
+
+sandbox:
+  home: tmp
+  env:
+    QT_QPA_PLATFORM: offscreen
+    LANG: C.UTF-8
+    LANGUAGE: en_US
+
+ready:
+  name-owner:
+    - org.deepin.dde.Clipboard1
+  timeout: 20s
+
+# 源码声明 XML 只在 dde-clipboard/ 下(org.deepin.dde.Clipboard1.xml)。
+# 仓内 dbus/ 目录的 Display1/Monitor/Dock1 XML 是本进程**消费**的远端接口
+# (displaymanager 查显示器、dock 插件交互),不是导出契约 —— 默认 glob 的
+# dbus/*.xml 会把它们算进来,导致静态校验误报"源码有而基线缺"。
+src-xml-globs:
+  - "dde-clipboard/*.xml"
+
+ignore:
+  interfaces:
+    - "org.freedesktop.DBus.*"
+
+teardown: kill

@@ -1,0 +1,71 @@
+name: DBus interface test
+
+# dde-clipboard 的 DBus 接口测试(process 形态)。
+# 被测物 dde-clipboard 是 GUI 程序(DApplication + MainWindow),离屏即可:
+# 窗口不需要真实屏幕,注册的接口是 org.deepin.dde.Clipboard1
+# (Toggle/Show/Hide + clipboardVisible + clipboardVisibleChanged)。
+#
+# 注意:程序用 DGuiApplicationHelper::setSingleInstance 做单实例,
+# 锁文件在 /tmp(按 uid + appname 命名,沙箱 HOME 改不了它)。
+# 本机若有残留进程/锁会直接 "set single instance failed!" 退出;
+# CI 容器每次全新,无此问题。
+on:
+  push:
+    branches: [master, main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  dbus-interface:
+    runs-on: ubuntu-latest
+    container: linuxdeepin/deepin:crimson
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: 安装构建依赖(照抄 debian/control Build-Depends)
+        run: |
+          apt-get update
+          apt-get install -y --no-install-recommends \
+            ca-certificates git make cmake pkg-config build-essential g++ \
+            qt6-base-dev qt6-base-private-dev qt6-tools-dev qt6-tools-dev-tools \
+            qt6-declarative-dev qt6-declarative-private-dev \
+            qt6-wayland-dev qt6-wayland-dev-tools qt6-wayland-private-dev \
+            qt6-l10n-tools qtchooser qmake6 \
+            libdtk6core-dev libdtk6core-bin libdtk6gui-dev libdtk6widget-dev \
+            libgio-qt-dev dde-tray-loader-dev libdde-shell-dev \
+            extra-cmake-modules systemd \
+            libgtest-dev \
+            python3-pip python3-setuptools python3-wheel python3-yaml \
+            python3-dbus python3-gi python3-dbusmock \
+            deepin-desktop-schemas adwaita-icon-theme \
+            gdb
+
+      - name: 构建被测物
+        run: |
+          cmake -S . -B build-cb -DCMAKE_BUILD_TYPE=Release
+          cmake --build build-cb -j"$(nproc)"
+          test -x build-cb/dde-clipboard
+
+      - name: 安装 dbus-testing
+        env:
+          DBUS_TESTING_REPO: https://github.com/MyLeeJiEun/deepin-dbus-testing
+        run: |
+          git clone --depth 1 "${DBUS_TESTING_REPO}" /tmp/dbus-testing-src
+          pip install --break-system-packages --no-build-isolation --no-deps \
+            /tmp/dbus-testing-src
+          dbus-testing --version
+
+      - name: 静态契约校验
+        run: dbus-testing check tests/dbus --static --strict --build-dir build-cb
+
+      - name: DBus 接口测试
+        run: dbus-testing run tests/dbus --build-dir build-cb --report artifacts/
+
+      - name: 上传报告
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: dbus-test-report
+          path: artifacts/
+          if-no-files-found: warn

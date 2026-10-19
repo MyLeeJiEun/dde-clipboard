@@ -1,0 +1,13 @@
+<node>
+  <object path="/org/deepin/dde/Clipboard1">
+    <interface name="org.deepin.dde.Clipboard1">
+      <method name="Hide"/>
+      <method name="Show"/>
+      <method name="Toggle"/>
+      <signal name="clipboardVisibleChanged">
+        <arg name="visible" type="b"/>
+      </signal>
+      <property name="clipboardVisible" type="b" access="read"/>
+    </interface>
+  </object>
+</node>

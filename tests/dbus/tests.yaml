@@ -1,0 +1,37 @@
+# dde-clipboard 用例。接口面很小(3 方法 + 1 属性 + 1 信号)。
+# 离屏环境窗口不可见但对象已注册,方法调用与属性读取应正常。
+apiVersion: v1
+cases:
+  - name: clipboard-visible-readable
+    get-prop:
+      object: /org/deepin/dde/Clipboard1
+      property: clipboardVisible
+    expect: { signature: "b" }
+
+  - name: show-callable
+    call:
+      object: /org/deepin/dde/Clipboard1
+      interface: org.deepin.dde.Clipboard1
+      method: Show
+
+  - name: hide-callable
+    call:
+      object: /org/deepin/dde/Clipboard1
+      interface: org.deepin.dde.Clipboard1
+      method: Hide
+
+  - name: toggle-callable
+    call:
+      object: /org/deepin/dde/Clipboard1
+      interface: org.deepin.dde.Clipboard1
+      method: Toggle
+
+  - name: unknown-method-rejected
+    call:
+      object: /org/deepin/dde/Clipboard1
+      interface: org.deepin.dde.Clipboard1
+      method: NoSuchMethod
+    expect: { error: org.freedesktop.DBus.Error.UnknownMethod }
+
+  - name: contract
+    check-contract: {}
